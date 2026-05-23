@@ -37,7 +37,7 @@ game_over = False
 marquee_message = ""
 question_count = 0
 question_index = 0
-questions = []
+question_sets = []
 
 
 
@@ -45,7 +45,7 @@ questions = []
 
 
 def draw():
-    global marquee_message
+    global marquee_message,question_count
     screen.fill("black")
 
     #Displaying the rectangles
@@ -63,6 +63,35 @@ def draw():
     screen.draw.textbox(marquee_message,marquee_box,color = "white")
     screen.draw.textbox(str(time_left),timer_box,color = "white",scolor = "dim grey",shadow = (0.5,0.5))
     screen.draw.textbox("Skip",skip_box,color = "white",angle = -90)
+
+def read_question_file():
+    global question_sets,question_count
+    #opening the file to be read
+    q_file = open("questions.txt",mode="r")
+    for each_line in q_file:
+        question_sets.append(each_line)
+        question_count = question_count + 1
+    
+    q_file.close()
+
+def read_next_question():
+    global question_index
+    question_index = question_index + 1
+    return question_sets.pop(0).split(",")
+
+def move_marquee():
+    marquee_box.x = marquee_box.x - 2
+    if marquee_box.right < 0:
+        marquee_box.left = WIDTH
+
+def update():
+    move_marquee()
+
+read_question_file()
+
+one_question_set = read_next_question()
+print (one_question_set)
+
     
     
 
