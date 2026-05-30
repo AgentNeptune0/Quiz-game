@@ -40,10 +40,6 @@ question_index = 0
 question_sets = []
 
 
-
-
-
-
 def draw():
     global marquee_message,question_count
     screen.fill("black")
@@ -63,6 +59,12 @@ def draw():
     screen.draw.textbox(marquee_message,marquee_box,color = "white")
     screen.draw.textbox(str(time_left),timer_box,color = "white",scolor = "dim grey",shadow = (0.5,0.5))
     screen.draw.textbox("Skip",skip_box,color = "white",angle = -90)
+    screen.draw.textbox(one_question_set[0].strip(),question_box,color = "white")
+    
+    index = 1
+    for box in answer_boxes:
+        screen.draw.textbox(one_question_set[index].strip(),box,color = "white")
+        index = index + 1
 
 def read_question_file():
     global question_sets,question_count
@@ -87,31 +89,38 @@ def move_marquee():
 def update():
     move_marquee()
 
+def update_time_left():
+    global time_left
+    if time_left > 0:
+        time_left = time_left - 1
+    else:
+        handle_game_over()
+
+def handle_game_over():
+    global one_question_set,game_over,time_left
+    message = f"Game over! You got {score} questions correct!"
+    one_question_set = [message,"-","-","-","-",5]
+    time_left = 0
+    game_over = True
+
+def skip_question():
+    global one_question_set,time_left
+    #if there are questions left, and game isn't over, then skip should happen.
+    if question_sets and not game_over:
+        one_question_set = read_next_question()
+        time_left = 10
+    else:
+        handle_game_over()
+
+def on_mouse_down(pos):
+    index = 1
+    #The index of answer options starts at one
+    
+
+
+
 read_question_file()
-
 one_question_set = read_next_question()
-print (one_question_set)
-
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+clock.schedule_interval(update_time_left,1)
 
 pgzrun.go()
