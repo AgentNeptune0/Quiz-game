@@ -71,6 +71,7 @@ def read_question_file():
     #opening the file to be read
     q_file = open("questions.txt",mode="r")
     for each_line in q_file:
+        each_line = each_line.strip()
         question_sets.append(each_line)
         question_count = question_count + 1
     
@@ -91,7 +92,7 @@ def update():
 
 def update_time_left():
     global time_left
-    if time_left > 0:
+    if time_left:
         time_left = time_left - 1
     else:
         handle_game_over()
@@ -112,13 +113,28 @@ def skip_question():
     else:
         handle_game_over()
 
-def on_mouse_down(pos):
+def correct_answer():
+    global score,one_question_set,time_left,question_sets
+    score = score + 1
+    if question_sets: #checking if questions sets has more data
+        one_question_set = read_next_question()
+        print(one_question_set)
+        time_left = 10
+    else:
+        handle_game_over()
+    
+def on_mouse_down(pos): #pos is the position where the mouse clicks the screen
     index = 1
     #The index of answer options starts at one
-    
-
-
-
+    for box in answer_boxes:
+        if box.collidepoint(pos):
+            if index is int(one_question_set[5].replace("\n","")):
+                correct_answer()
+            else:
+                handle_game_over()
+        index = index = 1    
+    if skip_box.collidepoint(pos):
+        skip_question()    
 read_question_file()
 one_question_set = read_next_question()
 clock.schedule_interval(update_time_left,1)
